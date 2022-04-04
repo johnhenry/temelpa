@@ -21,9 +21,51 @@ const createTodo = (title: string) => ({
     editing: false,
     completed: false,
 });
-
 export default function Home() {
-    const [todos, setTodos]: [List<Todo>, Function] = useState(List([]));
+    const [todos, setTodosIntermediate]: [List<Todo>, Function] = useState(
+        List([])
+    );
+    const [history, setHistory]: [any, Function] = useState({
+        getPrev: null,
+        todos,
+        getNext: null,
+    });
+
+    const setTodos = (todos: List<Todo>) => {
+        const current: {
+            getPrev: any;
+            todos: List<Todo>;
+            getNext: any;
+        } = {
+            getPrev: {
+                getPrev: null,
+                todos: List([]),
+                getNext: null,
+            },
+            todos,
+            getNext: null,
+        };
+        current.getPrev.getNext = current;
+        current.getPrev.todos = history.todos;
+        current.getPrev.getPrev = history.getPrev;
+        setHistory(current);
+        setTodosIntermediate(current.todos);
+    };
+    const setHistoryPrevious = () => {
+        const current = history.getPrev;
+        current.getNext = history;
+        setHistory(current);
+        setTodosIntermediate(current.todos);
+    };
+    const setHistoryNext = () => {
+        const current = history.getNext;
+        setHistory(current);
+        setTodosIntermediate(current.todos);
+    };
+    useEffect(() => {
+        console.log({ history });
+    }, [history]);
+
     const [currentTodos, setCurrentTodos]: [
         List<Todo>,
         (todos: List<Todo>) => void
@@ -142,6 +184,15 @@ export default function Home() {
             </section>
 
             <footer className="info">
+                <button
+                    disabled={!history.getPrev}
+                    onClick={setHistoryPrevious}
+                >
+                    Undo
+                </button>
+                <button disabled={!history.getNext} onClick={setHistoryNext}>
+                    Redo
+                </button>
                 <p>Double-click to edit a todo</p>
                 <p>
                     Part of <a href="http://todomvc.com">TodoMVC</a>

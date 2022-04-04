@@ -350,6 +350,20 @@ html .clear-completed:active {
 .info a:hover {
   text-decoration: underline;
 }
+.info button {
+  cursor: pointer;
+  box-sizing: border-box;
+  border-radius: 4px;
+  padding: 4px 12px;
+  margin: 4px;
+  color: red;
+  background-color: #fff;
+  box-shadow: 0 2px 4px 0 rgb(0 0 0 / 20%), 0 25px 50px 0 rgb(0 0 0 / 10%);
+}
+
+.info button:disabled {
+  color: black;
+}
 
 /*
 	Hack to remove background from Mobile Safari.
