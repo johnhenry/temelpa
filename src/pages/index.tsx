@@ -21,9 +21,16 @@ const createTodo = (title: string) => ({
     editing: false,
     completed: false,
 });
+const TODOS_STORAGE_KEY = "todos";
 export default function Home() {
     const [todos, setTodosIntermediate]: [List<Todo>, Function] = useState(
-        List([])
+        List(
+            JSON.parse(
+                (typeof window !== "undefined" &&
+                    localStorage.getItem(TODOS_STORAGE_KEY)) ||
+                    "[]"
+            )
+        )
     );
     const [history, setHistory]: [any, Function] = useState({
         getPrev: null,
@@ -50,21 +57,34 @@ export default function Home() {
         current.getPrev.getPrev = history.getPrev;
         setHistory(current);
         setTodosIntermediate(current.todos);
+        localStorage.setItem(
+            TODOS_STORAGE_KEY,
+            JSON.stringify(todos.toArray())
+        );
     };
     const setHistoryPrevious = () => {
         const current = history.getPrev;
         current.getNext = history;
         setHistory(current);
         setTodosIntermediate(current.todos);
+        localStorage.setItem(
+            TODOS_STORAGE_KEY,
+            JSON.stringify(todos.toArray())
+        );
     };
     const setHistoryNext = () => {
         const current = history.getNext;
         setHistory(current);
         setTodosIntermediate(current.todos);
+        localStorage.setItem(
+            TODOS_STORAGE_KEY,
+            JSON.stringify(todos.toArray())
+        );
     };
-    useEffect(() => {
-        console.log({ history });
-    }, [history]);
+    const clearStorage = () => {
+        localStorage.removeItem(TODOS_STORAGE_KEY);
+        window.location.reload();
+    };
 
     const [currentTodos, setCurrentTodos]: [
         List<Todo>,
@@ -194,6 +214,8 @@ export default function Home() {
                     Redo
                 </button>
                 <p>Double-click to edit a todo</p>
+                <button onClick={clearStorage}>Clear Storage</button>
+
                 <p>
                     Part of <a href="http://todomvc.com">TodoMVC</a>
                 </p>
