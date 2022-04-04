@@ -12,9 +12,7 @@ export default function TodoMarkAll({
     onMarkAllCompleted,
 }: Props) {
     const allCompleted = numCompletedTodos === numTodos;
-
     const labelText = `Mark all as ${allCompleted ? "active" : "complete"}`;
-
     const onClick = () => {
         if (allCompleted) {
             onMarkAllActive();

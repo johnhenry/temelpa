@@ -26,33 +26,32 @@ export default function TodoFooter({
             </span>
             <ul className="filters">
                 <li>
-                    <Link href="/#/">
-                        <a
-                            className={clsx({
-                                selected: filter == "all",
-                            })}
-                        >
-                            All
-                        </a>
-                    </Link>
+                    <a
+                        className={clsx({
+                            selected: filter == "all",
+                        })}
+                        href="#/"
+                    >
+                        All
+                    </a>
                 </li>
                 <li>
-                    <Link href="/#/active">
-                        <a className={clsx({ selected: filter === "active" })}>
-                            Active
-                        </a>
-                    </Link>
+                    <a
+                        className={clsx({ selected: filter === "active" })}
+                        href="#/active"
+                    >
+                        Active
+                    </a>
                 </li>
                 <li>
-                    <Link href="/#/completed">
-                        <a
-                            className={clsx({
-                                selected: filter === "completed",
-                            })}
-                        >
-                            Completed
-                        </a>
-                    </Link>
+                    <a
+                        className={clsx({
+                            selected: filter === "completed",
+                        })}
+                        href="#/completed"
+                    >
+                        Completed
+                    </a>
                 </li>
             </ul>
             {numActiveTodos < numTodos && (

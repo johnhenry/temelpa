@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "clsx": "^1.1.1",
+    "immutable": "^4.0.0",
     "joi": "^17.2.1",
     "next": "^12",
     "react": "^17",
