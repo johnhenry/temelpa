@@ -1,9 +1,12 @@
 import Head from "next/head";
 import React, { useEffect, useState, useCallback } from "react";
 import NewTodoInput from "src/components/NewTodoInput";
+import SearchTodoInput from "src/components/SearchTodoInput";
+
 import TodoFooter from "src/components/TodoFooter";
 import TodoList from "src/components/TodoList";
-import TodoMarkAll from "src/components/TodoMarkAll";
+import TodoToggleSearch from "src/components/TodoToggleSearch";
+
 import { Filter } from "src/models/filter";
 const Filters: {
     ACTIVE: Filter;
@@ -91,6 +94,8 @@ export default function Home() {
         (todos: List<Todo>) => void
     ] = useState(todos);
     const [filter, setFilter]: [Filter, Function] = useState("all");
+    const [searchMode, setSearchMode]: [any, Function] = useState(false);
+    const [filterText, setFilterText]: [string, Function] = useState("");
     const completedTodos: List<Todo> = todos.filter(
         ({ completed }: Todo) => completed
     );
@@ -110,14 +115,20 @@ export default function Home() {
     }, []);
 
     useEffect(() => {
+        console.log({ filterText });
         setCurrentTodos(
-            filter === Filters.ACTIVE
+            (filter === Filters.ACTIVE
                 ? activeTodos
                 : filter === Filters.COMPLETED
                 ? completedTodos
                 : todos
+            ).filter(({ title }: Todo) =>
+                searchMode && filterText.trim()
+                    ? title.includes(filterText)
+                    : true
+            )
         );
-    }, [todos, filter]);
+    }, [todos, filter, searchMode, filterText]);
 
     return (
         <>
@@ -128,38 +139,28 @@ export default function Home() {
             <section className="todoapp">
                 <header className="header">
                     <h1>todos</h1>
-                    <NewTodoInput
-                        onNewTodo={(title) => {
-                            if (!title.trim()) {
-                                return;
-                            }
-                            const todo = createTodo(title);
-                            setTodos(todos.push(todo));
-                        }}
-                    />
+                    {searchMode ? (
+                        <SearchTodoInput
+                            onUpdateFilterText={(t) => {
+                                console.log({ t });
+                                setFilterText(t);
+                            }}
+                        />
+                    ) : (
+                        <NewTodoInput
+                            onNewTodo={(title) => {
+                                if (!title.trim()) {
+                                    return;
+                                }
+                                const todo = createTodo(title);
+                                setTodos(todos.push(todo));
+                            }}
+                        />
+                    )}
                 </header>
 
                 <section className="main">
-                    <TodoMarkAll
-                        numCompletedTodos={completedTodos.size}
-                        numTodos={todos.size}
-                        onMarkAllActive={() =>
-                            setTodos(
-                                todos.map((x: Todo) => ({
-                                    ...x,
-                                    completed: false,
-                                }))
-                            )
-                        }
-                        onMarkAllCompleted={() =>
-                            setTodos(
-                                todos.map((x: Todo) => ({
-                                    ...x,
-                                    completed: true,
-                                }))
-                            )
-                        }
-                    />
+                    <TodoToggleSearch onToggleSearchComplete={setSearchMode} />
                     <TodoList
                         todos={currentTodos}
                         onEdit={(id) => {
